@@ -3,8 +3,7 @@
 
 def helloWorld():
         print "hello world"
-        x=5
-        y=9
+        x=y=5
         z=x+y
         print z
         print "Enter your name: ",
