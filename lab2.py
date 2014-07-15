@@ -29,8 +29,7 @@ def targetAtIndex(strand, target, i):
         if(strand[i]!=target[x]
            and target[x]!='.'
            and (target[x]!='x'or(strand[i]!='A'and strand[i]!='T'))
-           and (target[x]!='y'or(strand[i]!='G'and strand[i]!='C'))
-        ):
+           and (target[x]!='y'or(strand[i]!='G'and strand[i]!='C'))):
             return False
         x+=1
         i+=1
