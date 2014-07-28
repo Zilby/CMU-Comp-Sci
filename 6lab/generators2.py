@@ -2,6 +2,7 @@
 def wordsFromFile(fileName):
     inputfile=open(fileName)
     lines=inputfile.readlines()
+    inputfile.close()
     x=[]
     for line in lines:
         x+=line.split()
