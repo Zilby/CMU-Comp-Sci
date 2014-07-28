@@ -1,0 +1,1 @@
+This an example file of a text file that may appear during a call of this program. It isn't the most interesting file, but what the heck, it'll do. 
