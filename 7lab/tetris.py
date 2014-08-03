@@ -79,6 +79,7 @@ def redrawAll():
     canvas.delete(ALL)
     drawGame()
     drawFallingPiece()
+    #print canvas.data.speed
 
 
 def timerFired():
@@ -86,7 +87,7 @@ def timerFired():
         redrawAll()
         canvas.data.timer-=1
         canvas.data.speedTimer-=1
-        if(canvas.data.speedTimer==0 and canvas.data.speed!=5):
+        if(canvas.data.speedTimer==0 and canvas.data.speed!=2):
             canvas.data.speedTimer=300
             canvas.data.speed-=1
         if(canvas.data.timer==0):
