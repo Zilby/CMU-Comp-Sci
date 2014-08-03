@@ -4,6 +4,7 @@
 #-game will speed up over time
 #-drop piece feature added with prompt on first game before doing so (spacebar)
 #-wiggle room added (when placing a piece regularly, there will be some time before it locks into place
+#-pause feature added (p)
 
 
 from Tkinter import *
