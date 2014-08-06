@@ -22,6 +22,12 @@ def init():
     canvas.data.isGameOver=False
     canvas.data.pause=False
     canvas.data.score=0
+    canvas.data.alive=True
+    canvas.data.lives=10
+    canvas.data.pxcorL=0
+    canvas.data.pxcorR=0
+    canvas.data.pycorU=0
+    canvas.data.pycorD=0
 
 def timerFired():
     if(canvas.data.isGameOver==False and canvas.data.pause==False):
