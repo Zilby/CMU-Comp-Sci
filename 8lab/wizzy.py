@@ -178,6 +178,7 @@ def drawLevel(level):
                 canvas.data.pxcorR=canvas.data.pxcorL+30
                 canvas.data.pycorD=540
                 canvas.data.pycorU=canvas.data.pycorD-40
+                canvas.data.platformTimer=80
                 canvas.data.platforms=[[540,600,0,600,random.randint(0,80)],[480,500,150,450,random.randint(0,80)],
                                        [410,430,0,110,random.randint(0,80)],[340,360,100,180,random.randint(0,80)],
                                        [270,290,0,80,random.randint(0,80)],[210,230,150,430,random.randint(0,80)],
@@ -345,6 +346,14 @@ def enemyTouching(enemy,x): #enemy touching variant x (projectile)
         isTouching=True
     return isTouching
 
+def enemyOnPlatform(enemy,platform):
+    if(enemy[1]==platform[0] and
+       enemy[2]>=platform[2] and
+       enemy[3]<=platform[3]):
+        return True
+    else:
+        return False
+
 def attack():
     if(canvas.data.attackTimer==10):
         start=0
@@ -393,6 +402,15 @@ def removePlatforms(level,number):
             canvas.data.platforms=canvas.data.platforms[1:]
         else:
             canvas.data.platforms=[]
+        alive=False
+        for enemy in canvas.data.enemy1s:
+            for platform in canvas.data.platforms:
+                if(enemyOnPlatform(enemy,platform)==True):
+                   alive=True
+            if(alive!=True):
+                canvas.data.enemy1s.remove(enemy)
+            else:
+                alive=False
         if(level==1):
             if(number==12 or number==11 or number==10):
                 if(number==12):
@@ -402,7 +420,14 @@ def removePlatforms(level,number):
                 canvas.data.platformTimer=30
             else:
                 canvas.data.platformTimer=15
-        #if(level==2):
+        if(level==2):
+            if(number==9):
+                canvas.data.firstPlatform=False
+                canvas.data.platformTimer=100
+            elif(number==5 or number==7):
+                canvas.data.platformTimer=80
+            else:
+                canvas.data.platformTimer=30
     else:
         canvas.data.platformTimer-=1
         
