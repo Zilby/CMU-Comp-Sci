@@ -1,0 +1,12 @@
+Project Name: Wizzy
+
+Wizzy is an original platformer game with sprites created by myself (although I did use base models for all of them except the projectiles, eg: Legend of Zelda's Link). The objective is to get to the top of the screen as fast as possible before the platforms disappear. You may encounter enemies along the way. 
+
+Controls: 
+Arrow keys for jumping, and moving left to right.
+Spacebar fires your projectile, only while on the ground. 
+P will pause the game. 
+
+Special Stuff:
+If you look closely, you will note that there is a walking animation for the player sprite, (easier to see while on a platform). 
+Colors for platforms have been randomized on an RBG scale for purples. 
