@@ -70,6 +70,8 @@ def init():
     canvas.data.Backdrop=PhotoImage(file="backdropC.gif")
 
 def timerFired():
+    if(canvas.data.level==9):
+        canvas.data.isWin=True
     if(canvas.data.isGameOver==False and 
        canvas.data.pause==False and 
        canvas.data.isTitle==False and
@@ -306,6 +308,38 @@ def drawLevel(level):
                 canvas.data.enemy2s=[[300,450,200,400,480,420,"right","up",4,-30,3,0],[250,310,150,350,340,280,"right","up",6,-30,3,0], 
                                      [300,180,200,400,210,150,"right","up",8,-30,3,0],[250,50,150,350,80,20,"right","up",8,-30,3,0],
                                      [250,50,150,350,80,20,"right","up",4,-30,3,0]] 
+            if(canvas.data.level==7):
+                canvas.data.facing="left"
+                canvas.data.pxcorL=60
+                canvas.data.pxcorR=canvas.data.pxcorL+30
+                canvas.data.pycorD=540
+                canvas.data.pycorU=canvas.data.pycorD-40
+                canvas.data.platformTimer=40
+                canvas.data.platforms=[[540,600,0,600,random.randint(0,80)],[500,520,0,40,random.randint(0,80)],
+                                       [440,460,40,460,random.randint(0,80)],[380,400,490,530,random.randint(0,80)],
+                                       [320,340,560,600,random.randint(0,80)],[260,280,400,480,random.randint(0,80)],
+                                       [200,220,240,320,random.randint(0,80)],[140,160,80,160,random.randint(0,80)],
+                                       [80,100,0,40,random.randint(0,80)],[20,40,60,100,random.randint(0,80)]]
+                canvas.data.enemy1s=[[150,440,60,300,"left",-12],[300,440,150,460,"right",12]]
+                #[xcorL,ycorD,xstart,xend,ystart,yend,directionx,directiony,speedx,speedy,attackTimer,moveTimer]
+                canvas.data.enemy2s=[[300,410,200,400,440,380,"right","up",4,-30,3,0],[150,410,50,250,440,380,"left","up",-4,-30,3,0]]
+            if(canvas.data.level==8): #specific setup for level 2
+                canvas.data.facing="right"
+                canvas.data.pxcorL=80
+                canvas.data.pxcorR=canvas.data.pxcorL+30
+                canvas.data.pycorD=540
+                canvas.data.pycorU=canvas.data.pycorD-40
+                canvas.data.platformTimer=80
+                canvas.data.platforms=[[540,600,0,600,random.randint(0,80)],[480,500,150,450,random.randint(0,80)],
+                                       [410,430,490,600,random.randint(0,80)],[340,360,420,500,random.randint(0,80)],
+                                       [270,290,520,600,random.randint(0,80)],[210,230,170,450,random.randint(0,80)],
+                                       [150,170,0,120,random.randint(0,80)],[80,100,190,480,random.randint(0,80)],
+                                       [40,60,540,600,random.randint(0,80)]]
+                canvas.data.enemy1s=[[250,480,200,400,"right",9],[350,480,200,400,"left",-9],
+                                     [300,480,150,450,"right",15],[300,80,220,450,"left",-11],
+                                     [300,80,220,450,"right",11]] #[xcorL,ycorD,start,end,direction,speed]
+                canvas.data.enemy2s=[[200,180,170,450,210,150,"right","up",8,-30,3,0],[400,180,170,450,210,150,"left","up",-10,-30,3,0],
+                                     [340,50,200,470,80,20,"left","up",-10,-30,3,0]]
         else: #if not setting up, set the player image to the correct one
             playerImage=0
             if(canvas.data.facing=="right"):
@@ -678,6 +712,28 @@ def removePlatforms(level,number):
                 canvas.data.platformTimer=300
             else:
                 canvas.data.platformTimer=50
+        elif(level==7):
+            if(number==10):
+                canvas.data.firstPlatform=False
+                canvas.data.platformTimer=50
+            elif(number==9):
+                canvas.data.platformTimer=200
+            else:
+                canvas.data.platformTimer=15
+        elif(level==8):
+            if(number==9):
+                canvas.data.firstPlatform=False
+                canvas.data.platformTimer=120
+            elif(number==6):
+                canvas.data.platformTimer=180
+            elif(number==5):
+                canvas.data.platformTimer=50
+            elif(number==4):
+                canvas.data.platformTimer=200
+            elif(number==3):
+                canvas.data.platformTimer=80
+            else:
+                canvas.data.platformTimer=20
     else:
         canvas.data.platformTimer-=1
         
