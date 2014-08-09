@@ -22,6 +22,7 @@ def init():
     canvas.data.bg='#%02x%02x%02x' % (35, 0, 61) 
     canvas.data.timer=20
     canvas.data.isGameOver=False 
+    canvas.data.isWin=False
     canvas.data.isTitle=True
     canvas.data.pause=False
     canvas.data.score=0
@@ -71,13 +72,16 @@ def init():
 def timerFired():
     if(canvas.data.isGameOver==False and 
        canvas.data.pause==False and 
-       canvas.data.isTitle==False):
+       canvas.data.isTitle==False and
+       canvas.data.isWin==False):
         redrawAll() #general draw everything function
         movePlayer() #moves player
         if(touchingGround()==False): #if not touching anything, fall
                 canvas.data.jumping=True
     elif(canvas.data.isGameOver==True):
         drawGameOver()
+    elif(canvas.data.isWin==True):
+        drawWin()
     elif(canvas.data.isTitle==True):
         drawTitle()
     elif(canvas.data.pause==True):
@@ -112,6 +116,22 @@ def drawLevel(level):
             moveOrb(orb) #ie: if orb timer has not run out move orb
         else:
             canvas.data.projectiles.remove(orb) #otherwise delete it
+    for orb in canvas.data.projectileRs:
+        canvas.create_image(orb[0],orb[2],anchor=SW,image=orb[4])
+        if(orb[5]>0):
+            moveOrb(orb) #ie: if orb timer has not run out move orb
+            if(orbTouchingP(orb)==True):
+                #level=loseLife(level)
+                canvas.data.platforms=[]
+                canvas.data.projectiles=[]
+                canvas.data.projectileRs=[]
+                canvas.data.enemy1s=[]
+                canvas.data.enemy2s=[]
+                canvas.data.jumping=True
+                canvas.data.speedV=6
+                canvas.data.falling=True
+        else:
+            canvas.data.projectileRs.remove(orb) #otherwise delete it
     for enemy in canvas.data.enemy1s:
         alive=True
         moveEnemy(enemy)
@@ -137,6 +157,32 @@ def drawLevel(level):
                 eImage=canvas.data.Enemy1R
             else:
                 eImage=canvas.data.Enemy1L
+            canvas.create_image(enemy[0],enemy[1],anchor=SW,image=eImage)
+    for enemy in canvas.data.enemy2s:
+        alive=True
+        moveEnemy2(enemy)
+        for orb in canvas.data.projectiles:
+            if(enemy2Touching(enemy,orb)==True):
+                canvas.data.enemy2s.remove(enemy)
+                canvas.data.projectiles.remove(orb)
+                canvas.data.score+=30
+                alive=False
+        if(enemy2TouchingP(enemy)==True):
+            #level=loseLife(level)
+            canvas.data.platforms=[]
+            canvas.data.projectiles=[]
+            canvas.data.projectileRs=[]
+            canvas.data.enemy1s=[]
+            canvas.data.enemy2s=[]
+            canvas.data.jumping=True
+            canvas.data.speedV=6
+            canvas.data.falling=True
+        if(alive==True):
+            eImage=None
+            if(enemy[6]=="right"):
+                eImage=canvas.data.Enemy2R
+            else:
+                eImage=canvas.data.Enemy2L
             canvas.create_image(enemy[0],enemy[1],anchor=SW,image=eImage)
     if(canvas.data.pycorD<0): #if at top, level complete
         canvas.data.nextLevel=True
@@ -212,6 +258,54 @@ def drawLevel(level):
                 canvas.data.enemy1s=[[300,540,200,540,"left",12],[40,460,30,540,"right",10],[510,460,30,540,"left",10],
                                      [300,460,30,540,"left",15],[70,380,60,600,"right",5],[570,380,60,600,"left",5],
                                      [300,380,140,520,"left",15],[120,380,100,400,"right",8],[530,380,260,560,"left",8]] #[xcorL,ycorD,start,end,direction,speed]
+            if(canvas.data.level==4):
+                canvas.data.facing="right"
+                canvas.data.pxcorL=100
+                canvas.data.pxcorR=canvas.data.pxcorL+30
+                canvas.data.pycorD=540
+                canvas.data.pycorU=canvas.data.pycorD-40
+                canvas.data.platformTimer=100
+                canvas.data.platforms=[[540,600,0,600,random.randint(0,80)],[470,490,0,80,random.randint(0,80)],
+                                       [400,420,120,200,random.randint(0,80)],[330,350,0,80,random.randint(0,80)],
+                                       [260,280,120,200,random.randint(0,80)],[190,210,0,80,random.randint(0,80)],
+                                       [120,140,120,200,random.randint(0,80)],[120,540,200,220,random.randint(0,80)],
+                                       [500,520,460,500,random.randint(0,80)],[440,460,540,600,random.randint(0,80)],
+                                       [370,390,480,540,random.randint(0,80)],[300,320,540,600,random.randint(0,80)],
+                                       [230,250,480,540,random.randint(0,80)],[160,180,540,600,random.randint(0,80)],
+                                       [90,110,480,540,random.randint(0,80)],[20,40,540,600,random.randint(0,80)]]
+            if(canvas.data.level==5):
+                canvas.data.facing="left"
+                canvas.data.pxcorL=550
+                canvas.data.pxcorR=canvas.data.pxcorL+30
+                canvas.data.pycorD=540
+                canvas.data.pycorU=canvas.data.pycorD-40
+                canvas.data.platformTimer=160
+                canvas.data.platforms=[[540,600,0,600,random.randint(0,80)],[360,500,80,600,random.randint(0,80)],
+                                       [470,500,40,80,random.randint(0,80)],[400,430,0,40,random.randint(0,80)],
+                                       [180,320,0,520,random.randint(0,80)],[290,320,520,560,random.randint(0,80)],
+                                       [220,250,560,600,random.randint(0,80)],[0,140,80,600,random.randint(0,80)],
+                                       [110,140,40,80,random.randint(0,80)],[40,70,0,40,random.randint(0,80)]]
+                canvas.data.enemy1s=[[250,540,100,500,"left",-12],[350,540,100,500,"right",12],
+                                     [100,360,80,600,"right",12],[300,360,80,600,"right",15],
+                                     [400,360,80,600,"right",10],[100,180,0,520,"right",12],
+                                     [200,180,0,520,"right",16],[300,180,0,520,"right",10],
+                                     [400,180,0,520,"right",8]] 
+            if(canvas.data.level==6):
+                canvas.data.facing="right"
+                canvas.data.pxcorL=40
+                canvas.data.pxcorR=canvas.data.pxcorL+30
+                canvas.data.pycorD=540
+                canvas.data.pycorU=canvas.data.pycorD-40
+                canvas.data.platformTimer=160
+                canvas.data.platforms=[[540,600,0,600,random.randint(0,80)],[480,500,150,450,random.randint(0,80)],
+                                       [410,430,440,550,random.randint(0,80)],[340,360,100,400,random.randint(0,80)],
+                                       [270,290,0,80,random.randint(0,80)],[210,230,150,430,random.randint(0,80)],
+                                       [150,170,480,600,random.randint(0,80)],[80,100,120,410,random.randint(0,80)],
+                                       [40,60,0,60,random.randint(0,80)]]
+                #[xcorL,ycorD,xstart,xend,ystart,yend,directionx,directiony,speedx,speedy,attackTimer,moveTimer]
+                canvas.data.enemy2s=[[300,450,200,400,480,420,"right","up",4,-30,3,0],[250,310,150,350,340,280,"right","up",6,-30,3,0], 
+                                     [300,180,200,400,210,150,"right","up",8,-30,3,0],[250,50,150,350,80,20,"right","up",8,-30,3,0],
+                                     [250,50,150,350,80,20,"right","up",4,-30,3,0]] 
         else: #if not setting up, set the player image to the correct one
             playerImage=0
             if(canvas.data.facing=="right"):
@@ -255,6 +349,13 @@ def drawGameOver():
     canvas.create_text(300,250,font="Fixedsys",text="Game Over",fill="red")
     canvas.create_text(300,300,font="Fixedsys",text="Score: "+str(canvas.data.score),fill="blue")
     canvas.create_text(300,350,font="Fixedsys",text="Press R to Restart",fill="red")
+
+def drawWin():
+    canvas.delete(ALL)
+    canvas.create_rectangle(20,20,580,580,fill="black",width=0)
+    canvas.create_text(300,250,font="Fixedsys",text="You Win!",fill="white")
+    canvas.create_text(300,300,font="Fixedsys",text="Score: "+str(canvas.data.score),fill="blue")
+    canvas.create_text(300,350,font="Fixedsys",text="Press R to Restart",fill="white")
 
 def movePlayer():
     if(canvas.data.speedH!=0 and canvas.data.attacking==False and canvas.data.falling!=True): #if not still or attacking or falling
@@ -346,6 +447,32 @@ def enemyTouchingP(enemy): #enemy touching player
         isTouching=True
     return isTouching
 
+def enemy2TouchingP(enemy): #enemy2 touching player
+    isTouching=False
+    if((((canvas.data.pxcorR-10>=enemy[0]and (canvas.data.pxcorR-10)-canvas.data.speedH<=enemy[0]-enemy[8])or
+         (canvas.data.pxcorL+10<=enemy[0]+30 and (canvas.data.pxcorL+10)-canvas.data.speedH>=enemy[0]+30-enemy[8]))or 
+        ((canvas.data.pxcorL+canvas.data.pxcorR)/2>enemy[0]and
+         (canvas.data.pxcorL+canvas.data.pxcorR)/2<enemy[0]+30))and
+       (((canvas.data.pycorU>enemy[1]-30 and canvas.data.pycorU<enemy[1])or
+         (canvas.data.pycorD>enemy[1]-30 and canvas.data.pycorD<enemy[1]))or
+        ((canvas.data.pycorD+canvas.data.pycorU)/2<enemy[1]and 
+         (canvas.data.pycorD+canvas.data.pycorU)/2>enemy[1]-30))):
+        isTouching=True
+    return isTouching
+
+def orbTouchingP(orb): #projectileE touching player
+    isTouching=False
+    if((((canvas.data.pxcorR-10>=orb[0]and (canvas.data.pxcorR-10)-canvas.data.speedH<=orb[0]-orb[6])or
+         (canvas.data.pxcorL+10<=orb[0]+30 and (canvas.data.pxcorL+10)-canvas.data.speedH>=orb[0]+30-orb[6]))or 
+        ((canvas.data.pxcorL+canvas.data.pxcorR)/2>orb[0]and
+         (canvas.data.pxcorL+canvas.data.pxcorR)/2<orb[0]+30))and
+       (((canvas.data.pycorU>orb[2]-30 and canvas.data.pycorU<orb[2])or
+         (canvas.data.pycorD>orb[2]-30 and canvas.data.pycorD<orb[2]))or
+        ((canvas.data.pycorD+canvas.data.pycorU)/2<orb[2]and 
+         (canvas.data.pycorD+canvas.data.pycorU)/2>orb[2]-30))):
+        isTouching=True
+    return isTouching
+
 def touchingPWallX(x): #touching platform wall for variant X
     isTouching=False
     for platform in canvas.data.platforms:
@@ -368,6 +495,17 @@ def enemyTouching(enemy,x): #enemy touching variant x (projectile)
     isTouching=False
     if(((x[1]-20>=enemy[0]and (x[1]-20)-x[6]<=enemy[0]-enemy[5])or
         (x[0]+20<=enemy[0]+30 and (x[0]+20)-x[6]>=enemy[0]+30-enemy[5]))and
+       (((x[3]>enemy[1]and x[3]<enemy[1]-30)or
+         (x[2]>enemy[1]and x[2]<enemy[1]-30))or
+        ((x[2]+x[3])/2<enemy[1]and 
+         (x[2]+x[3])/2>enemy[1]-30))):
+        isTouching=True
+    return isTouching
+
+def enemy2Touching(enemy,x): #enemy touching variant x (projectile)
+    isTouching=False
+    if(((x[1]-20>=enemy[0]and (x[1]-20)-x[6]<=enemy[0]-enemy[8])or
+        (x[0]+20<=enemy[0]+30 and (x[0]+20)-x[6]>=enemy[0]+30-enemy[8]))and
        (((x[3]>enemy[1]and x[3]<enemy[1]-30)or
          (x[2]>enemy[1]and x[2]<enemy[1]-30))or
         ((x[2]+x[3])/2<enemy[1]and 
@@ -402,8 +540,19 @@ def attack():
     else:
         canvas.data.attacking=False
 
+def attackE(enemy): #[xcorL,ycorD,xstart,xend,ystart,yend,directionx,directiony,speedx,speedy,attackTimer] *ystart > yend
+    if(enemy[6]=="right"):
+        start=20
+        speed=8
+        pImage=canvas.data.projectileER
+    else:
+        start=-20
+        speed=-8
+        pImage=canvas.data.projectileEL
+    canvas.data.projectileRs+=[[enemy[0]+start,enemy[0]+30+start,enemy[1],enemy[1]-30,pImage,20,speed]] #xL,xR,yD,yU,image,life,speed
+
 def moveOrb(orb):
-    if(orb[4]==canvas.data.projectileR):
+    if(orb[4]==canvas.data.projectileR or orb[4]==canvas.data.projectileER):
         orb[0]+=8
         orb[1]+=8
         orb[5]-=1
@@ -412,7 +561,10 @@ def moveOrb(orb):
         orb[1]-=8
         orb[5]-=1
     if(touchingPWallX(orb)==True):
-        canvas.data.projectiles.remove(orb)
+        if(orb[4]==canvas.data.projectileR or orb[4]==canvas.data.projectileL):
+            canvas.data.projectiles.remove(orb)
+        else:
+            canvas.data.projectileRs.remove(orb)
 
 def moveEnemy(enemy):
     if(enemy[0]+30>=enemy[3]):
@@ -422,6 +574,37 @@ def moveEnemy(enemy):
         enemy[4]="right"
         enemy[5]=-1*enemy[5]
     enemy[0]+=enemy[5]
+
+def moveEnemy2(enemy): #[xcorL,ycorD,xstart,xend,ystart,yend,directionx,directiony,speedx,speedy,attackTimer] *ystart > yend
+    if(enemy[0]+30>=enemy[3]):
+        enemy[6]="left"
+        enemy[8]=-1*enemy[8]
+    elif(enemy[0]<=enemy[2]):
+        enemy[6]="right"
+        enemy[8]=-1*enemy[8]
+    enemy[0]+=enemy[8]
+    if(enemy[7]=="up"):
+        if(enemy[1]-30<enemy[5]):
+            enemy[7]="down"
+            enemy[9]=1
+        if(enemy[1]-15<(enemy[4]+enemy[5])/2):
+            enemy[9]+=.5
+        else:
+            enemy[9]-=.5
+    elif(enemy[7]=="down"):
+        if(enemy[1]>enemy[4]):
+            enemy[7]="up"
+            enemy[9]=-1
+            if(enemy[10]==0):
+                attackE(enemy)
+                enemy[10]=4-random.randint(0,2)
+            else:
+                enemy[10]-=1
+        if(enemy[1]-15>(enemy[4]+enemy[5])/2):
+            enemy[9]-=.5
+        else:
+            enemy[9]+=.5
+    enemy[1]+=enemy[9]
 
 def removePlatforms(level,number):
     if(canvas.data.platformTimer==0):
@@ -467,6 +650,34 @@ def removePlatforms(level,number):
                 canvas.data.platformTimer=18
             else:
                 canvas.data.platformTimer=30
+        elif(level==4):
+            if(number==16):
+                canvas.data.firstPlatform=False
+                canvas.data.platformTimer=15
+            elif(number==10):
+                canvas.data.platformTimer=0
+            elif(number==9):
+                canvas.data.platformTimer=80
+            else:
+                canvas.data.platformTimer=15
+        elif(level==5):
+            if(number==10):
+                canvas.data.firstPlatform=False
+                canvas.data.platformTimer=200
+            elif(number==7):
+                canvas.data.platformTimer=230
+            elif(number==4):
+                canvas.data.platformTimer=50
+            else:
+                canvas.data.platformTimer=0
+        elif(level==6):
+            if(number==9):
+                canvas.data.firstPlatform=False
+                canvas.data.platformTimer=150
+            elif(number==3 or number==5):
+                canvas.data.platformTimer=300
+            else:
+                canvas.data.platformTimer=50
     else:
         canvas.data.platformTimer-=1
         
@@ -501,6 +712,8 @@ def keyPressed(event):
                 init()
             if(event.char=='s'):
                 canvas.data.nextLevel=True
+            """if(event.char=='w'):
+                canvas.data.isWin=True"""
     
 def keyReleased(event):
     if(canvas.data.pause==False):

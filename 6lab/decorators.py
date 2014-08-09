@@ -40,6 +40,7 @@ def capitalize(function):
     def caps(*args):
         l=[]
         for sList in args:
+            print sList
             for each in sList:
                 l.append(each.upper())
         return function(l)
